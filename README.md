@@ -79,7 +79,7 @@ resume-enhancer/
 
 ### 1) Clone the repository
 ```bash
-git clone https://github.com/yourusername/resume-enhancer.git
+git clone https://github.com/Asiereiz/ResumeEnhancer.git
 cd resume-enhancer
 ```
 
