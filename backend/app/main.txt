@@ -1,0 +1,35 @@
+from fastapi import FastAPI
+from dotenv import load_dotenv
+import os
+
+# Carga el archivo .env
+load_dotenv()
+
+# Verificación rápida
+api_key = os.getenv("OPENAI_API_KEY")
+if not api_key:
+    raise RuntimeError("OPENAI_API_KEY no configurada en .env")
+
+from app.routes import router
+
+app = FastAPI()
+app.include_router(router)
+
+print("OPENAI_API_KEY cargada correctamente ✅")
+
+from fastapi import FastAPI
+from pydantic import BaseModel
+from services.resume_enhancer import enhance_resume
+
+app = FastAPI()
+
+class ResumeRequest(BaseModel):
+    text: str
+
+@app.post("/enhance")
+async def enhance(data: ResumeRequest):
+    return await enhance_resume(data.text)
+
+@app.get("/")
+def home():
+    return {"message": "Resume Enhancer API is running"}

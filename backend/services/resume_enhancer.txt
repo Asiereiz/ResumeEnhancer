@@ -1,0 +1,85 @@
+# resume_enhancer.py
+
+import os
+import json
+from dotenv import load_dotenv
+import openai
+from textstat import flesch_reading_ease, flesch_kincaid_grade
+
+load_dotenv()
+
+OPENAI_KEY = os.getenv("OPENAI_API_KEY")
+MODEL = os.getenv("OPENAI_MODEL", "gpt-4o-mini")
+
+if not OPENAI_KEY:
+    raise RuntimeError("OPENAI_API_KEY no configurada en .env")
+
+openai.api_key = OPENAI_KEY
+
+# JSON schema for function-calling
+resume_function = {
+    "name": "process_resume",
+    "description": "Produce an enhanced resume text, bullets, and ATS keywords.",
+    "parameters": {
+        "type": "object",
+        "properties": {
+            "enhanced_text": {"type": "string"},
+            "bullet_points": {"type": "array", "items": {"type": "string"}},
+            "ats_keywords": {"type": "array", "items": {"type": "string"}}
+        },
+        "required": ["enhanced_text", "bullet_points", "ats_keywords"]
+    }
+}
+
+def call_llm_and_parse(text: str):
+    prompt_user = (
+        "You are an assistant that improves resumes. "
+        "Return JSON via the function process_resume with fields: "
+        "enhanced_text (string), bullet_points (array of strings), "
+        "ats_keywords (array of strings)."
+        "\n\nResume input:\n" + text
+    )
+
+    resp = openai.ChatCompletion.create(
+        model=MODEL,
+        messages=[
+            {"role": "system", "content": "You are a helpful resume editor."},
+            {"role": "user", "content": prompt_user},
+        ],
+        functions=[resume_function],
+        function_call={"name": "process_resume"},
+        max_tokens=1000,
+        temperature=0.2,
+    )
+
+    choice = resp["choices"][0]["message"]
+    if "function_call" not in choice:
+        try:
+            return json.loads(choice.get("content", "{}"))
+        except Exception:
+            raise RuntimeError("No se obtuvo function_call ni JSON parseable del modelo.")
+
+    args_str = choice["function_call"]["arguments"]
+    parsed = json.loads(args_str)
+    return parsed
+
+# ⚠️ Cambiado de 'enhance' a 'enhance_resume'
+def enhance_resume(text: str):
+    parsed = call_llm_and_parse(text)
+    enhanced = parsed.get("enhanced_text", "")
+    bullet_points = parsed.get("bullet_points", [])
+    ats_keywords = parsed.get("ats_keywords", [])
+
+    try:
+        flesch = flesch_reading_ease(enhanced)
+        kincaid = flesch_kincaid_grade(enhanced)
+    except Exception:
+        flesch, kincaid = None, None
+
+    return {
+        "enhanced_text": enhanced,
+        "bullet_points": bullet_points,
+        "ats_keywords": ats_keywords,
+        "readability_flesch": flesch,
+        "readability_kincaid": kincaid
+    }
