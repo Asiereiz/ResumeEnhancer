@@ -1,5 +1,6 @@
 from pydantic import BaseModel
 from typing import List, Optional
+from datetime import datetime
 
 class ResumeRequest(BaseModel):
     text: str
@@ -13,6 +14,17 @@ class ResumeResponse(BaseModel):
     suggestions: List[str]
     readability_flesch: float = None
     readability_kincaid: float = None
+    original_readability_flesch: float = None
+    original_readability_kincaid: float = None
+
+class ResumeHistory(BaseModel):
+    id: int
+    ats_score: int
+    created_at: datetime
+    enhanced_summary: str  # Short snippet
+
+    class Config:
+        orm_mode = True
 
 class UserBase(BaseModel):
     email: str
