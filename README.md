@@ -1,59 +1,39 @@
-# AI Resume Enhancer
+AI Resume Enhancer
 
-## 🚀 AI Resume Enhancer — Professional CV Optimizer
-**AI Resume Enhancer** is an AI-powered tool that analyzes resumes and generates engineering-grade improvements.
-It enhances text clarity, generates impactful bullet points, and extracts ATS keywords to increase hiring chances.
+A web app that takes your resume as text and uses an LLM to suggest improvements. It rewrites the text, generates bullet points, extracts ATS keywords and gives an estimated ATS score.
 
-✅ **Built for job seekers:** simple, effective, and privacy-focused.
+I built it as a personal project to practice working with LLM APIs in a full-stack app.
 
-## ✨ Features
+What it does
+Takes a resume pasted as text
+Uses Groq (Llama 3) to generate:
+An improved version of the text
+Bullet points focused on impact
+ATS keywords
+An estimated ATS score (0-100)
+Strengths and suggestions
+Calculates readability with Flesch Reading Ease and Kincaid Grade
+Exports the results as PDF, DOCX or JSON
+Lets you switch between the enhanced text, bullet points and keywords views
+Has user registration and login (JWT)
+Works on desktop and mobile
+Tech stack
 
-### ✅ Core AI Analysis
-- Accepts resumes via text paste (expandable to file upload).
-- Uses **Groq (Llama 3)** to generate structured improvements:
-    - **Enhanced Text** with better flow and vocabulary.
-    - **Bullet Points** optimized for impact.
-    - **ATS Keywords** extraction.
-    - **ATS Score** (0–100) estimation.
-    - **Strengths & Suggestions** for further improvement.
-    - **Flesch Reading Ease** analysis for readability.
+Backend
 
-### ✅ Explainable AI / Transparency
-- **Readability Scores**: Calculates Flesch Reading Ease and Kincaid Grade to ensure clarity.
-- **ATS Scoring**: Provides a heuristic score based on keyword matching and structure.
+FastAPI (Python)
+Groq API (Llama 3 70B)
+SQLAlchemy + SQLite
+Textstat (readability metrics)
+python-jose (JWT)
+bcrypt (password hashing)
 
-### ✅ Frontend UX
-- **Clean Next.js UI** with Tailwind CSS.
-- **Export Options**:
-    - Generates **PDF** reports (using `jspdf`).
-    - Generates **DOCX** files.
-    - Exports **JSON** data.
-- **Interactive Toggles**: Switch between Enhanced Text, Bullet Points, and Keywords views.
-- **Responsive Design**: Works on desktop and mobile.
+Frontend
 
-### ✅ History & Auth System
-- **Secure Login + Register** with JWT authentication.
-- **Password hashing** with bcrypt.
-- **SQLite Database** for user management.
-
-## 🧱 Tech Stack
-
-### Backend
-- **FastAPI** (Python)
-- **Groq API** (Llama 3-70b)
-- **SQLAlchemy + SQLite** (Database)
-- **Textstat** (Readability metrics)
-- **Python-jose** (JWT Auth)
-
-### Frontend
-- **Next.js** (React Framework)
-- **Tailwind CSS** (Styling)
-- **jsPDF** (PDF Generation)
-- **TypeScript**
-
-## 📁 Project Structure
-
-```bash
+Next.js + TypeScript
+Tailwind CSS
+jsPDF (PDF export)
+Project structure
 resume-enhancer/
 ├── backend/
 │   ├── app/
@@ -67,75 +47,57 @@ resume-enhancer/
 │   └── requirements.txt
 ├── frontend/
 │   ├── src/
-│   │   ├── app/
-│   │   │   ├── page.tsx
-│   │   │   ├── login/
-│   │   │   └── register/
+│   │   └── app/
+│   │       ├── page.tsx
+│   │       ├── login/
+│   │       └── register/
 │   └── package.json
 └── README.md
-```
-
-## 🛠️ Installation & Setup
-
-### 1) Clone the repository
-```bash
+Setup
+1. Clone the repository
 git clone https://github.com/Asiereiz/ResumeEnhancer.git
-cd resume-enhancer
-```
+cd ResumeEnhancer
+2. Install dependencies
 
-### 2) Install dependencies
+Backend:
 
-**Backend:**
-```bash
 cd backend
 pip install -r requirements.txt
-```
 
-**Frontend:**
-```bash
+Frontend:
+
 cd frontend
 npm install
-```
+3. Environment variables
 
-### 3) Add environment variables
-Create a `.env` file in `backend/` with:
-```env
+Create a .env file inside backend/:
+
 GROQ_API_KEY=your_groq_api_key
 SECRET_KEY=your_jwt_secret
 ALGORITHM=HS256
 ACCESS_TOKEN_EXPIRE_MINUTES=30
-```
 
-### 4) Run the Application
+You can get a Groq API key from https://console.groq.com.
 
-**Start the BACKEND (FastAPI)**
-```bash
+4. Run it
+
+Backend:
+
 cd backend
-# Windows
 uvicorn app.main:app --reload
-```
-Expected output: `Uvicorn running on http://127.0.0.1:8000`
 
-**Start the FRONTEND (Next.js)**
-```bash
+It should be running on http://127.0.0.1:8000.
+
+Frontend (in another terminal):
+
 cd frontend
 npm run dev
-```
-Expected output: `Local URL: http://localhost:3000`
 
-## ⚠️ Manual Test Cases (Demo Checklist)
-- [ ] **Register/Login user**: Verify auth flow works.
-- [ ] **Analyze Resume**: Paste text and verify enhancement.
-- [ ] **Check Scores**: Verify ATS Score and Flesch Readability are displayed.
-- [ ] **Export PDF**: Click button and check `resume.pdf` content.
-- [ ] **Export DOCX/JSON**: Verify file generation.
-- [ ] **Clear Form**: Ensure state resets correctly.
+It should be running on http://localhost:3000.
 
-## 🔒 Security Notes
-- Passwords are hashed using `bcrypt`.
-- JWT tokens used for session management.
-- No sensitive keys committed to repo (use `.env`).
-
-## ⚠️ Limitations
-- **ATS Score** is a simulation based on AI heuristics, not a real ATS scan.
-- **Groq Llama 3** results may vary slightly between runs.
+Testing it manually
+Register a user and log in
+Paste a resume and run the analysis
+Check that the ATS score and readability scores show up
+Export the PDF, DOCX and JSON files and open them
+Clear the form and check that everything resets
